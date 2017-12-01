@@ -45,6 +45,28 @@ Read a particular entry:
 
 `less ~/.journal/journals/DATE`
 
+### Why keep a journal?
+
+  1. Reference material for infrequent tasks. Answers the question "How did we
+     do this last time?" quickly.
+  2. Helps structure thoughts for problem solving. Note down your hypotheses,
+     experiments, and outcomes.
+  3. A home for incident notes. Whilst they can't be shared in real-time like a
+     Google Doc, they make a good home for the engineer's personal actions and
+     observations during an incident. 
+  4. Can be relied on in court if the authenticity of the journal can be
+     etablished. This can be useful in a variety of circumstances, including
+     patent disputes, employment disputes, and so on.
+  5. Call logs can be referred to later, given to other team members, and
+     forwarded back to the caller so that they can spot mistakes or
+     miscommunications as soon as possible.
+  6. Logs of risk assessments for proposed systems, which may function as due
+     diligence records for the purpose of certain regulations.
+
+There are many other good reasons to keep a logbook. Some regulations and
+standards require documented evidence of certain activities; the logbook could
+form the basis of this documented evidence.
+
 ### Relying on a journal for investigative purposes
 
 You may rely on the journal if you can show:
