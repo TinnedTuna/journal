@@ -17,6 +17,7 @@ set -eufC
 JOURNAL_DIR="${HOME}/.journal"
 JOURNAL_WAL="${JOURNAL_DIR}/journal_xlog"
 JOURNALS="${JOURNAL_DIR}/journals"
+TOC="${JOURNAL_DIR}/toc"
 
 USER=$(/usr/bin/whoami)
 DATE=$(/usr/bin/date +%FT%T%Z)
@@ -72,11 +73,17 @@ then
   LAST_WAL_SUM="0000000000000000000000000000000000000000"
 fi
 
+# Write out the current log
 CURRENT_JOURNAL="${JOURNALS}/${DATE}"
 printf "%s\n%s\n%s\n\n" "${DATE}" "${USER}" "${LAST_WAL_SUM}" \
     > "${CURRENT_JOURNAL}"
 cat "${TEMP_JOURNAL}" >> "${CURRENT_JOURNAL}"
 
-CURRENT_SUM=$(shasum "${CURRENT_JOURNAL}" | cut -d ' ' -f 1)
+# Update the WAL
+CURRENT_SUM=$(shasum "${CURRENT_JOURNAL}"  | cut -d ' ' -f 1)
 printf "%s %s\n" "${DATE}" "${CURRENT_SUM}" >> "${JOURNAL_WAL}"
 
+# Finally, update the table of contents.
+# The title must be 50 chars or less.
+TITLE=$(head -n 1 ${TEMP_JOURNAL} | cut -c 1-50)
+printf "\"%s\" %s\n" "${TITLE}" "${DATE}" >> "${TOC}"

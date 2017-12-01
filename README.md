@@ -22,9 +22,13 @@ Run
 
 `journal`
 
-Your editor, or vim if non is configured, should be launched. You can
+Your editor, or vim if none is configured, should be launched. You can
 enter whatever text you like. After you have closed the editor, it
 will be saved in `~/.journal`, along with a log.
+
+The table of contents `~/.journal/toc` will be kept updated with the
+first 50 characters of the first line of your entry. Keep this short and
+descriptive so you can find your entries quickly.
 
 ## License
 
