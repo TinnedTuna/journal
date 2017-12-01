@@ -44,6 +44,7 @@ Read the table of contents:
 Read a particular entry:
 
 `less ~/.journal/journals/DATE`
+
 ### Relying on a journal for investigative purposes
 
 You may rely on the journal if you can show:
@@ -62,7 +63,10 @@ The table of contents file does not contribute towards the reliability of the
 log.
 
 Much of the above can be accomplished by regularly shipping `~/.journal_xlog`
-to an independent third party, such as an audit service.
+to an independent third party, such as an audit service, and keeping backups of
+the entry files. The recipient should verify that the timestamps in
+`~/.journal_xlog` are not too far in the past or more than a few seconds in the
+future.
 
 ## License
 

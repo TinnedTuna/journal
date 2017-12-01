@@ -78,6 +78,7 @@ CURRENT_JOURNAL="${JOURNALS}/${DATE}"
 printf "%s\n%s\n%s\n\n" "${DATE}" "${USER}" "${LAST_WAL_SUM}" \
     > "${CURRENT_JOURNAL}"
 cat "${TEMP_JOURNAL}" >> "${CURRENT_JOURNAL}"
+date +"%n%nClose date: %FT%T%Z" >> "${CURRENT_JOURNAL}"
 chmod 0400 "${CURRENT_JOURNAL}"
 
 # Update the WAL
