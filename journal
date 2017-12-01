@@ -78,6 +78,7 @@ CURRENT_JOURNAL="${JOURNALS}/${DATE}"
 printf "%s\n%s\n%s\n\n" "${DATE}" "${USER}" "${LAST_WAL_SUM}" \
     > "${CURRENT_JOURNAL}"
 cat "${TEMP_JOURNAL}" >> "${CURRENT_JOURNAL}"
+chmod 0400 "${CURRENT_JOURNAL}"
 
 # Update the WAL
 CURRENT_SUM=$(shasum "${CURRENT_JOURNAL}"  | cut -d ' ' -f 1)
