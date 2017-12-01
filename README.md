@@ -3,7 +3,9 @@
 A small shell script to create journal entries. Each journal entry is
 stored in a file, and contains the current date, shasum of the previous
 entry, and the user who created the journal entry. Entries are designed to
-be difficult to modify after created, and harder to modify undetected, butthis is still possible.
+be difficult to modify after created, and harder to modify undetected, but
+this is still possible. Additional support is required to make this a robust
+legal document.
 
 ## Getting started
 
