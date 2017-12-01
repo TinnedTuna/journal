@@ -1,0 +1,82 @@
+#!/bin/sh
+
+# Basic journalling script. No bells or whistles, just manages creating
+# the journal file, and making a tamper-evident log. It is not intended
+# for forensic log files, just for peace-of-mind that things haven't
+# accidentally gone walk-abouts.
+#
+# Author: Dan Turner
+# Date: 2017-12-01
+# License: Simplified BSD
+
+# Set flags for safer scripting.
+# -C is most important as we don't want to accidentally over-write any
+# entries.
+set -eufC
+
+JOURNAL_DIR="${HOME}/.journal"
+JOURNAL_WAL="${JOURNAL_DIR}/journal_xlog"
+JOURNALS="${JOURNAL_DIR}/journals"
+
+USER=$(/usr/bin/whoami)
+DATE=$(/usr/bin/date +%FT%T%Z)
+
+# A little hack to test an env var while set -u is in play
+if [ -z "${EDITOR+x}" ]
+then
+  EDITOR=/usr/bin/vim
+fi
+
+# Make sure all of the journalling directories are configured.
+if [ ! -d "${JOURNAL_DIR}" ]
+then
+  printf "Setting up %s\n" "${JOURNAL_DIR}"
+  mkdir "${JOURNAL_DIR}"
+fi
+
+if [ ! -d "${JOURNALS}" ]
+then
+  printf "Setting up %s\n" "${JOURNALS}"
+  mkdir "${JOURNALS}"
+fi
+
+if [ ! -w "${JOURNAL_WAL}" ]
+then
+  printf "WARNING: missing WAL. Creating %s\n" "${JOURNAL_WAL}"
+  touch "${JOURNAL_WAL}"
+fi
+
+# A temporary file for the user to edit
+TEMP_JOURNAL=$(mktemp)
+
+# Clean up when we exit.
+function trap_exit() {
+  rm "${TEMP_JOURNAL}"
+}
+trap trap_exit EXIT
+
+# Launch the user's chosen editor.
+"${EDITOR}" "${TEMP_JOURNAL}"
+
+# The user may abort a journal entry by leaving the file blank
+if [ ! -s "${TEMP_JOURNAL}" ]
+then
+  printf "Journal entry was empty. Discarding.\n"
+  exit 0;
+fi
+
+LAST_WAL_SUM=$(tail -n 1 "${JOURNAL_WAL}" | cut -d ' ' -f 2)
+
+if [ -z "${LAST_WAL_SUM}" ]
+then
+  LAST_WAL_SUM="0000000000000000000000000000000000000000"
+fi
+
+CURRENT_JOURNAL="${JOURNALS}/${DATE}"
+printf "%s\n%s\n%s\n\n" "${DATE}" "${USER}" "${LAST_WAL_SUM}" \
+    > "${CURRENT_JOURNAL}"
+cat "${TEMP_JOURNAL}" >> "${CURRENT_JOURNAL}"
+
+CURRENT_SUM=$(shasum "${CURRENT_JOURNAL}" | cut -d ' ' -f 1)
+printf "%s %s\n" "${DATE}" "${CURRENT_SUM}" >> "${JOURNAL_WAL}"
+
