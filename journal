@@ -20,7 +20,8 @@ JOURNALS="${JOURNAL_DIR}/journals"
 TOC="${JOURNAL_DIR}/toc"
 
 USER=$(/usr/bin/whoami)
-DATE=$(/usr/bin/date +%FT%T%Z)
+DATE=$(which date)
+CURR_DATE=$(${DATE} +%FT%T%Z)
 
 # A little hack to test an env var while set -u is in play
 if [ -z "${EDITOR+x}" ]
@@ -74,8 +75,8 @@ then
 fi
 
 # Write out the current log
-CURRENT_JOURNAL="${JOURNALS}/${DATE}"
-printf "%s\n%s\n%s\n\n" "${DATE}" "${USER}" "${LAST_WAL_SUM}" \
+CURRENT_JOURNAL="${JOURNALS}/${CURR_DATE}"
+printf "%s\n%s\n%s\n\n" "${CURR_DATE}" "${USER}" "${LAST_WAL_SUM}" \
     > "${CURRENT_JOURNAL}"
 cat "${TEMP_JOURNAL}" >> "${CURRENT_JOURNAL}"
 date +"%n%nClose date: %FT%T%Z" >> "${CURRENT_JOURNAL}"
@@ -83,9 +84,9 @@ chmod 0400 "${CURRENT_JOURNAL}"
 
 # Update the WAL
 CURRENT_SUM=$(shasum "${CURRENT_JOURNAL}"  | cut -d ' ' -f 1)
-printf "%s %s\n" "${DATE}" "${CURRENT_SUM}" >> "${JOURNAL_WAL}"
+printf "%s %s\n" "${CURR_DATE}" "${CURRENT_SUM}" >> "${JOURNAL_WAL}"
 
 # Finally, update the table of contents.
 # The title must be 50 chars or less.
 TITLE=$(head -n 1 ${TEMP_JOURNAL} | cut -c 1-50)
-printf "\"%s\" %s\n" "${TITLE}" "${DATE}" >> "${TOC}"
+printf "\"%s\" %s\n" "${TITLE}" "${CURR_DATE}" >> "${TOC}"
